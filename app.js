@@ -18,9 +18,20 @@ app.use(express.json());
 
 const users = [
     { username: 'admin', password: 'admin*' },
-    { username: 'user', password: 'user' }
+    { username: 'user', password: 'user*' }
 ];
 
+
+const getClientIP = (req) => {    
+    const forwardedFor = req.headers['x-forwarded-for'];
+    if (forwardedFor) {        
+        return forwardedFor.split(',')[0];
+    }    
+    return req.headers['x-real-ip'] || 
+           req.connection.remoteAddress || 
+           req.socket.remoteAddress || 
+           req.connection.socket.remoteAddress;
+};
 
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
@@ -31,7 +42,7 @@ app.post('/login', (req, res) => {
         return res.status(401).json({ message: 'Credenciales inválidas' });
     }
 
-    const token = jwt.sign({ username: user.username }, SECRET_KEY, { expiresIn: '5h' });
+    const token = jwt.sign({ username: user.username }, SECRET_KEY, { expiresIn: '1h' });
     res.json({ token });
 });
 
@@ -124,6 +135,14 @@ const verifyToken = (req, res, next) => {
 app.use(verifyToken);
 
 app.get('/protected', (req, res) => {
+
+    const clientIP = getClientIP(req);        
+    const token = req.headers['authorization'];
+    const decoded = jwt.decode(token);
+        
+    const expirationTime = new Date(decoded.exp * 1000);
+    const formattedExpTime = expirationTime.toLocaleString();
+
     res.send(`
         <!DOCTYPE html>
         <html>
@@ -176,6 +195,8 @@ app.get('/protected', (req, res) => {
                 <p class="message">Has sido autenticado correctamente y tienes acceso a todos los recursos protegidos.</p>
                 <div class="user-info">
                     <p>Usuario: ${req.user.username}</p>
+                    <p><span class="label">IP del cliente:</span> ${clientIP}</p>
+                    <p><span class="label">Token expira:</span> ${formattedExpTime}
                 </div>
             </div>
         </body>
