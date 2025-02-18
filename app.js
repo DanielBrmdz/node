@@ -1,10 +1,8 @@
-// server.js
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const app = express();
 const cors = require('cors');
 const PORT = 3000;
-//const SECRET_KEY = 'tu_clave_secreta_muy_segura';
 const SECRET_KEY = 'contrasenia_muy_muy_segura';
 const path = require('path');
 
@@ -12,7 +10,7 @@ const path = require('path');
 
 app.use(cors());
 app.use(cors({
-    origin: '*', // En producción, especifica el origen exacto
+    origin: '*', 
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -20,7 +18,7 @@ app.use(cors({
 app.use(express.json());
 
 const users = [
-    { username: 'admin', password: 'admin*' },
+    { username: 'admin', password: 'admin123' },
     { username: 'user', password: 'user*' }
 ];
 
