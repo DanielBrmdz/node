@@ -4,7 +4,10 @@ const jwt = require('jsonwebtoken');
 const app = express();
 const cors = require('cors');
 const PORT = 3000;
-const SECRET_KEY = 'tu_clave_secreta_muy_segura';
+//const SECRET_KEY = 'tu_clave_secreta_muy_segura';
+const SECRET_KEY = 'contrasenia_muy_muy_segura';
+const path = require('path');
+
 
 
 app.use(cors());
@@ -21,6 +24,11 @@ const users = [
     { username: 'user', password: 'user*' }
 ];
 
+
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'despliegue.html'));
+});
 
 const getClientIP = (req) => {    
     const forwardedFor = req.headers['x-forwarded-for'];
