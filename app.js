@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const app = express();
-const cors = require('cors');
+const cors = require('');
 const PORT = 3000;
 const SECRET_KEY = 'contrasenia_muy_muy_segura';
 const path = require('path');
@@ -48,7 +48,7 @@ app.post('/login', (req, res) => {
         return res.status(401).json({ message: 'Credenciales inválidas' });
     }
 
-    const token = jwt.sign({ username: user.username }, SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ username: user.username , info : "more info" }, SECRET_KEY, { expiresIn: '1h' });
     res.json({ token });
 });
 
