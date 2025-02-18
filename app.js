@@ -16,29 +16,26 @@ app.use(cors({
 
 app.use(express.json());
 
-// Array de usuarios (en un caso real esto estaría en una base de datos)
 const users = [
-    { username: 'admin', password: '12345' },
-    { username: 'user', password: 'password' }
+    { username: 'admin', password: 'admin*' },
+    { username: 'user', password: 'user' }
 ];
 
-// Ruta de login
+
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
-
-    // Verificar si el usuario existe
+    
     const user = users.find(u => u.username === username && u.password === password);
 
     if (!user) {
         return res.status(401).json({ message: 'Credenciales inválidas' });
     }
 
-    // Generar token
     const token = jwt.sign({ username: user.username }, SECRET_KEY, { expiresIn: '5h' });
     res.json({ token });
 });
 
-// Middleware de verificación de token
+
 const verifyToken = (req, res, next) => {
     const token = req.headers['authorization'];
 
@@ -81,7 +78,6 @@ const verifyToken = (req, res, next) => {
     }
 
     try {
-        // Eliminar "Bearer " si está presente
         const cleanToken = token.replace('Bearer ', '');
         const decoded = jwt.verify(cleanToken, SECRET_KEY);
         req.user = decoded;
@@ -125,10 +121,8 @@ const verifyToken = (req, res, next) => {
     }
 };
 
-// Aplicar middleware de verificación a todas las rutas siguientes
 app.use(verifyToken);
 
-// Ruta protegida
 app.get('/protected', (req, res) => {
     res.send(`
         <!DOCTYPE html>
